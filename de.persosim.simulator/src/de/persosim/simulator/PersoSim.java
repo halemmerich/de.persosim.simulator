@@ -40,7 +40,7 @@ import de.persosim.simulator.utils.PersoSimLogger;
  * @author slutters
  * 
  */
-public class PersoSim implements Runnable, Simulator {
+public class PersoSim implements Simulator {
 	
 	private SocketSimulator simulator;
 	
@@ -72,13 +72,33 @@ public class PersoSim implements Runnable, Simulator {
 		}
 	}
 	
+	public PersoSim(){
+		startPersoSim();
+	}
+	
 	public PersoSim(String... args) {
+		startPersoSim();
 		try {
 			handleArgs(args);
 		} catch (IllegalArgumentException e) {
 			System.out.println("simulation aborted, reason is: " + e.getMessage());
 		}
 		
+	}
+	
+	public void startPersoSim(){
+		System.out.println("Welcome to PersoSim");
+		PersoSimLogger.init();
+
+		startSimulator();
+		
+		new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				handleUserCommands();
+			}
+		}).start();
 	}
 
 	/**
@@ -90,15 +110,7 @@ public class PersoSim implements Runnable, Simulator {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		(new PersoSim(args)).run();
-	}
-
-	@Override
-	public void run() {
-		System.out.println("Welcome to PersoSim");
-		PersoSimLogger.init();
-		startSimulator();
-		handleUserCommands();
+		(new PersoSim(args)).startPersoSim();
 	}
 	
 	public static void showExceptionToUser(Exception e) {

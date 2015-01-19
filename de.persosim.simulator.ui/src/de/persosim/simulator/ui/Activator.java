@@ -5,6 +5,7 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceEvent;
 import org.osgi.framework.ServiceListener;
 import org.osgi.framework.ServiceReference;
+import org.osgi.util.tracker.ServiceTracker;
 
 import de.persosim.simulator.Simulator;
 
@@ -16,10 +17,10 @@ import de.persosim.simulator.Simulator;
 public class Activator implements BundleActivator {
 
 	private static BundleContext context;
-	private static Simulator sim;
+	private static ServiceTracker serviceTracker;
 
 	public static Simulator getSim() {
-		return sim;
+		return (Simulator) serviceTracker.getService();
 	}
 
 	static BundleContext getContext() {
@@ -35,23 +36,9 @@ public class Activator implements BundleActivator {
 		Activator.context = bundleContext;
 
 		
-		ServiceListener serviceListener = new ServiceListener() {
-			
-			@Override
-			public void serviceChanged(ServiceEvent event) {
-				ServiceReference<?> serviceReference = event.getServiceReference();
-				switch (event.getType()) {
-				case ServiceEvent.REGISTERED:
-					sim = (Simulator) context.getService(serviceReference);
-					break;
-				default:
-					break;
-				}
-				
-			}
-		};
+		serviceTracker = new ServiceTracker(bundleContext, Simulator.class.getName(), null);
+		serviceTracker.open();
 		
-		bundleContext.addServiceListener(serviceListener);
 	}
 
 	/*

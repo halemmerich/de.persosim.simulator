@@ -27,3 +27,4 @@ Import-Package: org.eclipse.core.runtime,
  org.osgi.framework;version="1.8.0"
 Eclipse-BundleShape: dir
 Service-Component: OSGI-INF/SimulatorComponent.xml
+Bundle-ActivationPolicy: lazy

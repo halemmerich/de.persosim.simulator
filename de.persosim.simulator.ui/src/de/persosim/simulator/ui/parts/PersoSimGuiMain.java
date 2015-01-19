@@ -24,7 +24,8 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 
-import de.persosim.simulator.PersoSim;
+import de.persosim.simulator.Simulator;
+import de.persosim.simulator.ui.Activator;
 import de.persosim.simulator.ui.utils.TextLengthLimiter;
 
 /**
@@ -91,10 +92,8 @@ public class PersoSimGuiMain {
 		
 		txtInput.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
-		PersoSim sim = new PersoSim();
-		sim.loadPersonalization("1"); //load default perso with valid TestPKI EF.CardSec etc. (Profile01)
-		Thread simThread = new Thread(sim);
-		simThread.start();
+		
+		Simulator sim = Activator.getSim();
 		
 		//following Thread ensures that the buffered UI contents are updated regularly
 		Thread uiBufferThread = new Thread(new Runnable() {
