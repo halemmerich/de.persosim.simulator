@@ -5,7 +5,7 @@ import javax.inject.Inject;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 
-import de.persosim.simulator.PersoSim;
+import de.persosim.simulator.Simulator;
 import de.persosim.simulator.ui.parts.PersoSimGuiMain;
 
 /**
@@ -31,7 +31,7 @@ public abstract class SelectPersoHandler {
 	protected void loadPersonalization(String personalization) {
 		System.out.println("Select Perso Handler called with param: " + personalization);
 		
-		String persoCmdString = PersoSim.CMD_LOAD_PERSONALIZATION + " " + personalization;
+		String persoCmdString = Simulator.CMD_LOAD_PERSONALIZATION + " " + personalization;
 		
 		System.out.println("executing command: " + persoCmdString);
 		
