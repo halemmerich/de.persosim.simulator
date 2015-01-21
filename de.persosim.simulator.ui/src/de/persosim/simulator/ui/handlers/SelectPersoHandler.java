@@ -6,6 +6,7 @@ import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 
 import de.persosim.simulator.Simulator;
+import de.persosim.simulator.ui.Activator;
 import de.persosim.simulator.ui.parts.PersoSimGuiMain;
 
 /**
@@ -39,7 +40,7 @@ public abstract class SelectPersoHandler {
 		MPart mainPart = partService.findPart("de.persosim.simulator.ui.parts.mainPart");
 		
 		if (mainPart.getObject() instanceof PersoSimGuiMain) {
-			((PersoSimGuiMain) mainPart.getObject()).write(persoCmdString);
+			Activator.getSim().executeUserCommands(persoCmdString);
 		}
 		
 		System.out.println("finished setting of personalization");

@@ -1,12 +1,8 @@
 package de.persosim.simulator.ui.parts;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
 import java.io.PrintStream;
-import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.Date;
 
@@ -24,7 +20,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 
-import de.persosim.simulator.Simulator;
 import de.persosim.simulator.ui.Activator;
 import de.persosim.simulator.ui.utils.TextLengthLimiter;
 
@@ -41,13 +36,9 @@ public class PersoSimGuiMain {
 	
 	private Text txtInput, txtOutput;
 	
-	private final InputStream originalSystemIn = System.in;
 	private final PrintStream originalSystemOut = System.out;
 	
 	private PrintStream newSystemOut;
-	private final PipedInputStream inPipe = new PipedInputStream();
-	
-	private PrintWriter inWriter;
 	
 	Composite parent;
 
@@ -55,7 +46,6 @@ public class PersoSimGuiMain {
 	public void createComposite(Composite parentComposite) {
 		parent = parentComposite;
 		grabSysOut();
-		grabSysIn();
 		
 		parent.setLayout(new GridLayout(1, false));
 		
@@ -80,10 +70,7 @@ public class PersoSimGuiMain {
 				if((e.character == SWT.CR) || (e.character == SWT.LF)) {
 					String line = txtInput.getText();
 					
-					txtOutput.append(line + System.lineSeparator());
-					
-					inWriter.println(line);
-					inWriter.flush();
+					Activator.getSim().executeUserCommands(line);
 					
 					txtInput.setText("");
 				}
@@ -91,9 +78,6 @@ public class PersoSimGuiMain {
 		});
 		
 		txtInput.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
-		
-		Simulator sim = Activator.getSim();
 		
 		//following Thread ensures that the buffered UI contents are updated regularly
 		Thread uiBufferThread = new Thread(new Runnable() {
@@ -193,11 +177,6 @@ public class PersoSimGuiMain {
 			}
 		}
 	}
-
-	public void write(String line) {
-		inWriter.println(line);
-		inWriter.flush();
-	}
 	
 	/**
 	 * This method deactivates redirection of System.out.
@@ -209,36 +188,9 @@ public class PersoSimGuiMain {
 		}
 	}
 	
-	/**
-	 * This method activates redirection of System.in.
-	 */
-	private void grabSysIn() {
-		// XXX check if redirecting the system in is actually necessary
-		try {
-	    	inWriter = new PrintWriter(new PipedOutputStream(inPipe), true);
-	    	System.setIn(inPipe);
-	    	originalSystemOut.println("activated redirection of System.in");
-	    }
-	    catch(IOException e) {
-	    	System.out.println("Error: " + e);
-	    	return;
-	    }
-	}
-	
-	/**
-	 * This method deactivates redirection of System.in.
-	 */
-	private void releaseSysIn() {
-		if(originalSystemIn != null) {
-			System.setIn(originalSystemIn);
-			originalSystemOut.println("deactivated redirection of System.in");
-		}
-	}
-	
 	@PreDestroy
 	public void cleanUp() {
 		releaseSysOut();
-		releaseSysIn();
 		System.exit(0);
 	}
 
