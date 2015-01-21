@@ -2,12 +2,9 @@ package de.persosim.simulator.ui.parts;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
-import java.io.PrintStream;
 import java.io.PrintWriter;
-import java.util.Arrays;
 import java.util.Date;
 
 import javax.annotation.PostConstruct;
@@ -25,6 +22,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 
 import de.persosim.simulator.PersoSim;
+import de.persosim.simulator.ui.Activator;
 import de.persosim.simulator.ui.utils.TextLengthLimiter;
 
 /**
@@ -41,9 +39,7 @@ public class PersoSimGuiMain {
 	private Text txtInput, txtOutput;
 	
 	private final InputStream originalSystemIn = System.in;
-	private final PrintStream originalSystemOut = System.out;
 	
-	private PrintStream newSystemOut;
 	private final PipedInputStream inPipe = new PipedInputStream();
 	
 	private PrintWriter inWriter;
@@ -53,12 +49,13 @@ public class PersoSimGuiMain {
 	@PostConstruct
 	public void createComposite(Composite parentComposite) {
 		parent = parentComposite;
-		grabSysOut();
 		grabSysIn();
 		
 		parent.setLayout(new GridLayout(1, false));
 		
 		txtOutput = new Text(parent, SWT.READ_ONLY | SWT.MULTI | SWT.BORDER | SWT.WRAP | SWT.V_SCROLL);
+		
+		Activator.getTextFieldLogListener().setText(txtOutput);
 		
 		TextLengthLimiter tl = new TextLengthLimiter();
 		txtOutput.addModifyListener(tl);
@@ -113,61 +110,6 @@ public class PersoSimGuiMain {
 		uiBufferThread.start();
 		
 	}
-		
-	/**
-	 * This method activates redirection of System.out.
-	 */
-	private void grabSysOut() {
-	    OutputStream out = new OutputStream() {
-
-			char [] buffer = new char [80];
-			int currentPosition = 0;
-			boolean checkNextForNewline = false;
-			
-			@Override
-			public void write(int b) throws IOException {
-				final char value = (char) b;
-				
-				if (checkNextForNewline){
-					checkNextForNewline = false;
-					if (value == '\n'){
-						return;
-					}
-				}
-
-				if (currentPosition < buffer.length - 1 && !(value == '\n' || value == '\r')){
-					buffer [currentPosition++] = value;
-				} else {
-					if (value == '\n' || value == '\r'){
-						if (value == '\r'){
-							checkNextForNewline = true;
-						}
-						buffer [currentPosition++] = '\n';
-					} else {
-						buffer [currentPosition++] = value;
-					}
-
-					final String toPrint = new String(Arrays.copyOf(buffer, currentPosition));
-					originalSystemOut.print(toPrint);
-					appendToGui(toPrint);
-					
-					
-					currentPosition = 0;
-				}
-				
-				
-			}
-		};
-
-		newSystemOut = new PrintStream(out, true);
-		
-		System.setOut(newSystemOut);
-		
-		if(newSystemOut != null) {
-			originalSystemOut.println("activated redirection of System.out");
-		}
-	    
-	}
 	
 	StringBuilder guiStringBuilder = new StringBuilder();
 	long lastGuiFlush = 0;
@@ -201,16 +143,6 @@ public class PersoSimGuiMain {
 	}
 	
 	/**
-	 * This method deactivates redirection of System.out.
-	 */
-	private void releaseSysOut() {
-		if(originalSystemOut != null) {
-			System.setOut(originalSystemOut);
-			System.out.println("deactivated redirection of System.out");
-		}
-	}
-	
-	/**
 	 * This method activates redirection of System.in.
 	 */
 	private void grabSysIn() {
@@ -218,7 +150,7 @@ public class PersoSimGuiMain {
 		try {
 	    	inWriter = new PrintWriter(new PipedOutputStream(inPipe), true);
 	    	System.setIn(inPipe);
-	    	originalSystemOut.println("activated redirection of System.in");
+	    	System.out.println("activated redirection of System.in");
 	    }
 	    catch(IOException e) {
 	    	System.out.println("Error: " + e);
@@ -232,13 +164,12 @@ public class PersoSimGuiMain {
 	private void releaseSysIn() {
 		if(originalSystemIn != null) {
 			System.setIn(originalSystemIn);
-			originalSystemOut.println("deactivated redirection of System.in");
+			System.out.println("deactivated redirection of System.in");
 		}
 	}
 	
 	@PreDestroy
 	public void cleanUp() {
-		releaseSysOut();
 		releaseSysIn();
 		System.exit(0);
 	}
