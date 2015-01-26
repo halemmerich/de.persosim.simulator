@@ -5,5 +5,5 @@ Bundle-SymbolicName: de.persosim.fileLogger
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.persosim.filelogger.Activator
 Require-Bundle: org.eclipse.core.runtime
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
