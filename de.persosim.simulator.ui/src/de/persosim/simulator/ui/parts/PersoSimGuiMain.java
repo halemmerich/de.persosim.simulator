@@ -55,7 +55,7 @@ public class PersoSimGuiMain {
 		
 		txtOutput = new Text(parent, SWT.READ_ONLY | SWT.MULTI | SWT.BORDER | SWT.WRAP | SWT.V_SCROLL);
 		
-		Activator.getTextFieldLogListener().setText(txtOutput);
+		Activator.getTextFieldLogListener().setText(txtOutput, sync);
 		
 		TextLengthLimiter tl = new TextLengthLimiter();
 		txtOutput.addModifyListener(tl);
