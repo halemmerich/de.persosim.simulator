@@ -15,10 +15,10 @@ import de.persosim.simulator.Simulator;
 public class Activator implements BundleActivator {
 
 	private static BundleContext context;
-	private static ServiceTracker serviceTracker;
+	private static ServiceTracker<Simulator, Simulator> serviceTracker;
 	
 	public static void executeUserCommands(String command){
-		Simulator sim = (Simulator) serviceTracker.getService();
+		Simulator sim = serviceTracker.getService();
 		if (sim != null){
 			sim.executeUserCommands(command);
 		} else {
@@ -39,7 +39,7 @@ public class Activator implements BundleActivator {
 		Activator.context = bundleContext;
 
 		
-		serviceTracker = new ServiceTracker(bundleContext, Simulator.class.getName(), null);
+		serviceTracker = new ServiceTracker<Simulator, Simulator>(bundleContext, Simulator.class.getName(), null);
 		serviceTracker.open();
 		
 	}
