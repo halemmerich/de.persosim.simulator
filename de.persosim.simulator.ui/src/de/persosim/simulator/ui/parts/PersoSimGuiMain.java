@@ -13,7 +13,6 @@ import java.util.Date;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
-import javax.security.auth.login.LoginException;
 
 import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.di.UISynchronize;
@@ -24,12 +23,10 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
-import org.osgi.service.log.LogEntry;
 
 import de.persosim.simulator.PersoSim;
 import de.persosim.simulator.ui.Activator;
 import de.persosim.simulator.ui.utils.TextLengthLimiter;
-import de.persosim.simulator.utils.PersoSimLogger;
 
 /**
  * @author slutters

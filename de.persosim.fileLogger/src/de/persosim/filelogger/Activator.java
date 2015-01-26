@@ -15,7 +15,7 @@ public class Activator implements BundleActivator {
 
 	private LinkedList<LogReaderService> readers = new LinkedList<>();
 	private FileLogger consoleLogger = new FileLogger();
-	private ServiceTracker logReaderTracker;
+	private ServiceTracker<LogReaderService, LogReaderService> logReaderTracker;
 	
 	// This will be used to keep track of listeners as they are un/registering
 	private ServiceListener serviceListener = new ServiceListener() {
