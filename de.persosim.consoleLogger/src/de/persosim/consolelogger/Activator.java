@@ -18,6 +18,7 @@ public class Activator implements BundleActivator {
 	
 	private LinkedList<LogReaderService> readers = new LinkedList<>();
 	private ConsoleLogger consoleLogger = new ConsoleLogger();
+	private ServiceTracker logReaderTracker;
 	
 	// This will be used to keep track of listeners as they are un/registering
 	private ServiceListener serviceListener = new ServiceListener() {
@@ -49,7 +50,7 @@ public class Activator implements BundleActivator {
 	 */
 	public void start(BundleContext context) throws Exception {
 		
-		ServiceTracker logReaderTracker = new ServiceTracker<>(context, LogReaderService.class.getName(), null);
+		logReaderTracker = new ServiceTracker<>(context, LogReaderService.class.getName(), null);
 		logReaderTracker.open();
 		Object[] readers = logReaderTracker.getServices();
 		if (readers != null){
@@ -60,7 +61,6 @@ public class Activator implements BundleActivator {
 			}
 		}
 		
-		logReaderTracker.close();
 		
         String filter = "(objectclass=" + LogReaderService.class.getName() + ")";
         try {
@@ -83,6 +83,7 @@ public class Activator implements BundleActivator {
             readerService.removeLogListener(consoleLogger);
             iterator.remove();
         }
+		logReaderTracker.close();
 
 	}
 
