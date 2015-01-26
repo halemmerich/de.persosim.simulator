@@ -14,24 +14,27 @@ import org.osgi.service.log.LogListener;
 public class FileLogger implements LogListener {
 
 	DateFormat format = DateFormat.getDateTimeInstance();
-	String logFileName = "logs" + File.separator + "PersoSim_" + new SimpleDateFormat("yyyyMMddHHmmss").format(Calendar.getInstance().getTime()) + ".log";
+	String logFileName = "logs" + File.separator + "PersoSim_OSGi_" + new SimpleDateFormat("yyyyMMddHHmmss").format(Calendar.getInstance().getTime()) + ".log";
 	File file = new File(logFileName);
 	PrintWriter writer;
 	
 	public FileLogger() {
-		if (!file.exists()){
-			try {
-				file.createNewFile();
-				writer = new PrintWriter(file);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
 	}
 	
 	@Override
 	public void logged(LogEntry entry) {
+		if (!file.exists()){
+			try {
+				if (writer != null){
+					writer.flush();
+					writer.close();
+				}
+				writer = new PrintWriter(file);
+				file.createNewFile();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 		if (entry.getMessage() != null){
 			writer.println("[" + entry.getBundle().getSymbolicName() + " - " + format.format(new Date(entry.getTime())) + "] "  + entry.getMessage());
 		}
