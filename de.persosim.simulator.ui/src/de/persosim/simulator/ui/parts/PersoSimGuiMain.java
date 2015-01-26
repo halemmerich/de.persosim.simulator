@@ -1,5 +1,8 @@
 package de.persosim.simulator.ui.parts;
 
+import static de.persosim.simulator.utils.PersoSimLogger.log;
+import static de.persosim.simulator.utils.PersoSimLogger.logException;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PipedInputStream;
@@ -10,6 +13,7 @@ import java.util.Date;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
+import javax.security.auth.login.LoginException;
 
 import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.di.UISynchronize;
@@ -20,10 +24,12 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
+import org.osgi.service.log.LogEntry;
 
 import de.persosim.simulator.PersoSim;
 import de.persosim.simulator.ui.Activator;
 import de.persosim.simulator.ui.utils.TextLengthLimiter;
+import de.persosim.simulator.utils.PersoSimLogger;
 
 /**
  * @author slutters
@@ -150,10 +156,10 @@ public class PersoSimGuiMain {
 		try {
 	    	inWriter = new PrintWriter(new PipedOutputStream(inPipe), true);
 	    	System.setIn(inPipe);
-	    	System.out.println("activated redirection of System.in");
+	    	log(this.getClass(), "activated redirection of System.in");
 	    }
 	    catch(IOException e) {
-	    	System.out.println("Error: " + e);
+	    	logException(this.getClass(), e);
 	    	return;
 	    }
 	}
@@ -164,7 +170,7 @@ public class PersoSimGuiMain {
 	private void releaseSysIn() {
 		if(originalSystemIn != null) {
 			System.setIn(originalSystemIn);
-			System.out.println("deactivated redirection of System.in");
+			log(this.getClass(), "deactivated redirection of System.in");
 		}
 	}
 	
