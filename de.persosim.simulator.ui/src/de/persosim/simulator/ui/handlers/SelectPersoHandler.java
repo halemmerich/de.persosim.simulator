@@ -40,7 +40,7 @@ public abstract class SelectPersoHandler {
 		MPart mainPart = partService.findPart("de.persosim.simulator.ui.parts.mainPart");
 		
 		if (mainPart.getObject() instanceof PersoSimGuiMain) {
-			Activator.getSim().executeUserCommands(persoCmdString);
+			Activator.executeUserCommands(persoCmdString);
 		}
 		
 		System.out.println("finished setting of personalization");

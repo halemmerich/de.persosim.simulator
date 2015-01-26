@@ -2,6 +2,7 @@ package de.persosim.simulator.ui;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceException;
 import org.osgi.util.tracker.ServiceTracker;
 
 import de.persosim.simulator.Simulator;
@@ -15,9 +16,14 @@ public class Activator implements BundleActivator {
 
 	private static BundleContext context;
 	private static ServiceTracker serviceTracker;
-
-	public static Simulator getSim() {
-		return (Simulator) serviceTracker.getService();
+	
+	public static void executeUserCommands(String command){
+		Simulator sim = (Simulator) serviceTracker.getService();
+		if (sim != null){
+			sim.executeUserCommands(command);
+		} else {
+			throw new ServiceException("The Simulator service could not be found");
+		}
 	}
 
 	static BundleContext getContext() {
