@@ -47,6 +47,8 @@ public class PersoSimLogger {
 
 		// log to stdOut
 		ConsoleAppender consoleAppender = new ConsoleAppender(layout);
+		consoleAppender.setFollow(true);
+		consoleAppender.activateOptions();
 		logger.addAppender(consoleAppender);
 
 		// log to file
