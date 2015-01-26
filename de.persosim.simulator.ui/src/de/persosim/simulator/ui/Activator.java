@@ -51,6 +51,7 @@ public class Activator implements BundleActivator {
 	@Override
 	public void stop(BundleContext bundleContext) throws Exception {
 		Activator.context = null;
+		serviceTracker.close();
 	}
 
 }
