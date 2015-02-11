@@ -4,9 +4,9 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>de.persosim</groupId>
-    <artifactId>persoSim</artifactId>
+    <artifactId>persosim</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <relativePath>../../</relativePath>
+    <relativePath>../../de.persosim.rcp/de.persosim.parent</relativePath>
   </parent>
   <groupId>de.persosim</groupId>
   <artifactId>de.persosim.fileLogger</artifactId>
