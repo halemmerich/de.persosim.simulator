@@ -23,7 +23,8 @@ Export-Package: de.persosim.simulator,
 Bundle-ClassPath: .,
  lib/bcprov-jdk15on-150.jar,
  lib/log4j-1.2.17.jar
-Import-Package: org.osgi.framework
+Import-Package: javax.xml.bind,
+ org.osgi.framework
 Eclipse-BundleShape: dir
 Service-Component: OSGI-INF/SimulatorComponent.xml
 Bundle-ActivationPolicy: lazy
