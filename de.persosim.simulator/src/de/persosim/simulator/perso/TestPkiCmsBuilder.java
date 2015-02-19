@@ -7,8 +7,6 @@ import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 
-import javax.smartcardio.CardException;
-
 import de.persosim.simulator.perso.dscardsigner.CardSigner;
 import de.persosim.simulator.tlv.ConstructedTlvDataObject;
 
@@ -43,7 +41,7 @@ public class TestPkiCmsBuilder extends DefaultSecInfoCmsBuilder {
 			dsCertBytes = cardSigner.getDSCertificate();
 			if (dsCertBytes==null) return super.getCertificate();
 			else return new ConstructedTlvDataObject(dsCertBytes);
-		} catch (CardException | IOException e) {
+		} catch (IOException e) {
 			log(TestPkiCmsBuilder.class, e.getMessage(), WARN);
 			return super.getCertificate();
 		}
@@ -58,7 +56,7 @@ public class TestPkiCmsBuilder extends DefaultSecInfoCmsBuilder {
 		try {
 			signature = cardSigner.getSignature(digestAlgorithm, sigInput);
 			if (signature==null) signature = super.getSignature(sigInput);
-		} catch (CardException | NoSuchAlgorithmException | NoSuchProviderException e) {
+		} catch (NoSuchAlgorithmException | NoSuchProviderException e) {
 			log(TestPkiCmsBuilder.class, e.getMessage(), WARN);
 			return super.getSignature(sigInput);
 		}

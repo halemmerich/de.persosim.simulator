@@ -8,8 +8,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.util.Properties;
 
-import javax.smartcardio.CardException;
-
 import de.persosim.simulator.utils.HexString;
 
 
@@ -54,7 +52,7 @@ public class CardSigner {
 	 * @throws NoSuchAlgorithmException
 	 * @throws NoSuchProviderException
 	 */
-	public byte[] getSignature(String digestAlg, byte[] input) throws CardException, NoSuchAlgorithmException, NoSuchProviderException {
+	public byte[] getSignature(String digestAlg, byte[] input) throws NoSuchAlgorithmException, NoSuchProviderException {
 		byte[] digest = getDigest(digestAlg, input);
 		return getCardSignature(props.getProperty("sigPIN"), digest);
 		
@@ -67,7 +65,7 @@ public class CardSigner {
 	 * @throws CardException
 	 * @throws IOException
 	 */
-	public byte[] getDSCertificate() throws CardException, IOException  {
+	public byte[] getDSCertificate() throws IOException  {
 		byte[] dsCertBytes = null;
 		short dsCertFID = Short.parseShort(props.getProperty("dsCertFID", "5302"), 16);
 
@@ -86,22 +84,20 @@ public class CardSigner {
 		return mda.digest(data);
 	}
 	
-	private SigAnimaCardHandler buildCardHandler() throws CardException  {
+	private SigAnimaCardHandler buildCardHandler()  {
 		int slotId = Integer.parseInt(props.getProperty("slotId", "0"));
 		byte[] saAID = HexString.toByteArray(props.getProperty("saAID", "D2760001324543534947"));
         return new SigAnimaCardHandler(slotId, saAID);
     }
 	
-	private byte[] getCardSignature(String pin, byte[] digest) throws CardException	{
+	private byte[] getCardSignature(String pin, byte[] digest)	{
 		byte[] signatureBytes = null;
 		
             synchronized (this) // verify, MSE, PSOSign
             {
                 SigAnimaCardHandler cardHandler = buildCardHandler();
                 boolean pinVerified = cardHandler.verify(pin);
-                if (!pinVerified)
-                    throw new CardException("PIN verification failed.");
-                else
+                if (pinVerified)
                 	signatureBytes = cardHandler.sign((byte)0, digest);
             }
      
