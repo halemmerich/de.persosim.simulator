@@ -12,7 +12,7 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
 
-import de.persosim.simulator.PersoSim;
+import de.persosim.simulator.CommandParser;
 
 /**
  * This class is used as primary Logger throughout all PersoSim classes.
@@ -57,7 +57,7 @@ public class PersoSimLogger {
 			FileAppender fileAppender = new FileAppender(layout, logFileName, false);
 			logger.addAppender(fileAppender);
 		} catch (IOException e) {
-			PersoSim.showExceptionToUser(e);
+			CommandParser.showExceptionToUser(e);
 		}
 
 		// ALL | DEBUG | INFO | WARN | ERROR | FATAL | OFF:

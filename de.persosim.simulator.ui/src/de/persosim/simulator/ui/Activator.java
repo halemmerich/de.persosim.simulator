@@ -5,6 +5,7 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceException;
 import org.osgi.util.tracker.ServiceTracker;
 
+import de.persosim.simulator.CommandParser;
 import de.persosim.simulator.Simulator;
 
 /**
@@ -20,7 +21,7 @@ public class Activator implements BundleActivator {
 	public static void executeUserCommands(String command){
 		Simulator sim = serviceTracker.getService();
 		if (sim != null){
-			sim.executeUserCommands(command);
+			CommandParser.executeUserCommands(sim, command);
 		} else {
 			throw new ServiceException("The Simulator service could not be found");
 		}
