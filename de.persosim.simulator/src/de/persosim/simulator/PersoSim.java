@@ -16,7 +16,10 @@ import de.persosim.simulator.jaxb.PersoSimJaxbContextProvider;
 import de.persosim.simulator.perso.DefaultPersoTestPki;
 import de.persosim.simulator.perso.MinimumPersonalization;
 import de.persosim.simulator.perso.Personalization;
+import de.persosim.simulator.platform.Iso7816;
+import de.persosim.simulator.platform.PersoSimKernel;
 import de.persosim.simulator.utils.PersoSimLogger;
+import de.persosim.simulator.utils.Utils;
 
 /**
  * This class provides access to and control of the actual simulator. It can be
@@ -30,8 +33,6 @@ import de.persosim.simulator.utils.PersoSimLogger;
  * 
  */
 public class PersoSim implements Simulator {
-	
-	private SocketSimulator simulator;
 	
 	/*
 	 * This variable holds the currently used personalization.
@@ -49,6 +50,8 @@ public class PersoSim implements Simulator {
 	public static final String persoFilePostfix = ".xml";
 	
 	private int simPort = DEFAULT_SIM_PORT; // default
+	
+	private PersoSimKernel kernel;
 	
 	static {
 		//register BouncyCastle provider
@@ -92,8 +95,8 @@ public class PersoSim implements Simulator {
 	
 	@Override
 	public boolean startSimulator() {
-		if (simulator != null && simulator.isRunning()) {
-			System.out.println("Simulator already running");
+		if (kernel != null) {
+			System.out.println("Simulator already active");
 			return true;
 		}
 		
@@ -102,29 +105,19 @@ public class PersoSim implements Simulator {
 			return false;
 		}
 		
-		SocketSimulator newSimulator = new SocketSimulator(getPersonalization(), simPort);
-		
-		if(newSimulator.start()) {
-			simulator = newSimulator;
-			System.out.println("The simulator has been started");
-			return true;
-		} else{
-			return false;
-		}
-
+		kernel = new PersoSimKernel(getPersonalization());
+		kernel.init();
+		return true;
 	}
 	
 	@Override
 	public boolean stopSimulator() {
 		boolean simStopped = false;
 		
-		if (simulator != null) {
-			simStopped = simulator.stop();
-			simulator = null;
-			
-			if(simStopped) {
-				System.out.println("The simulator has been stopped and will no longer respond to incoming APDUs until it is (re-) started");
-			}
+		if (kernel != null) {
+			kernel = null;
+			System.out.println("The simulator has been stopped and will no longer respond to incoming APDUs until it is (re-) started");
+			return true;
 		}
 		
 		return simStopped;
@@ -216,7 +209,11 @@ public class PersoSim implements Simulator {
 
 	@Override
 	public byte[] processCommand(byte[] apdu) {
-		return simulator.processCommand(apdu);
+		if (kernel != null){
+			return kernel.process(apdu);
+		}
+		System.out.println("The simulator is stopped and the APDU was ignored");
+		return Utils.toUnsignedByteArray(Iso7816.SW_6F00_UNKNOWN);
 	}
 
 }
