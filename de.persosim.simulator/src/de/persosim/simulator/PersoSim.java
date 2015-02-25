@@ -33,6 +33,9 @@ import de.persosim.simulator.utils.Utils;
  * 
  */
 public class PersoSim implements Simulator {
+
+	private static final byte[] ACK = Utils.toUnsignedByteArray(Iso7816.SW_9000_NO_ERROR);
+	private static final byte[] NACK = Utils.toUnsignedByteArray(Iso7816.SW_6F00_UNKNOWN);
 	
 	/*
 	 * This variable holds the currently used personalization.
@@ -48,8 +51,6 @@ public class PersoSim implements Simulator {
 	public static final String persoPath = "personalization/profiles/";
 	public static final String persoFilePrefix = "Profile";
 	public static final String persoFilePostfix = ".xml";
-	
-	private int simPort = DEFAULT_SIM_PORT; // default
 	
 	private PersoSimKernel kernel;
 	
@@ -198,22 +199,34 @@ public class PersoSim implements Simulator {
 	}
 
 	@Override
-	public void setPort(int newPort) {
-		simPort = newPort;
-	}
-
-	@Override
-	public int getPort() {
-		return simPort;
-	}
-
-	@Override
 	public byte[] processCommand(byte[] apdu) {
-		if (kernel != null){
+		if (kernel == null){
+			System.out.println("The simulator is stopped and the APDU was ignored");
+			return NACK;
+		}
+		
+		int clains = Utils.maskUnsignedShortToInt(Utils.concatenate(apdu[0], apdu[1]));
+		switch (clains) {
+		case 0xFF00:
+			return kernel.powerOff();
+		case 0xFF01:
+			return kernel.powerOn();
+		case 0xFF6F:
+			return NACK;
+		case 0xFF90:
+			return ACK;
+		case 0xFFFF:
+			return kernel.reset();
+		default:
+			// all other (unknown) APDUs are forwarded to the
+			// PersoSimKernel
 			return kernel.process(apdu);
 		}
-		System.out.println("The simulator is stopped and the APDU was ignored");
-		return Utils.toUnsignedByteArray(Iso7816.SW_6F00_UNKNOWN);
+	}
+
+	@Override
+	public boolean isRunning() {
+		return kernel != null;
 	}
 
 }
