@@ -40,7 +40,7 @@ public class Activator implements BundleActivator {
 		Activator.context = bundleContext;
 		serviceTracker = new ServiceTracker<Simulator, Simulator>(bundleContext, Simulator.class.getName(), null);
 		serviceTracker.open();
-		serviceTracker.getService().loadPersonalization("personalization/profiles/Profile01.xml");
+		serviceTracker.getService().loadPersonalization(CommandParser.parsePersonalization("personalization/profiles/Profile01.xml"));
 		serviceTracker.getService().startSimulator();
 	}
 
