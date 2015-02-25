@@ -14,6 +14,7 @@ import org.osgi.framework.Bundle;
 
 import de.persosim.simulator.jaxb.PersoSimJaxbContextProvider;
 import de.persosim.simulator.perso.DefaultPersoTestPki;
+import de.persosim.simulator.perso.MinimumPersonalization;
 import de.persosim.simulator.perso.Personalization;
 import de.persosim.simulator.utils.PersoSimLogger;
 
@@ -57,13 +58,14 @@ public class PersoSim implements Simulator {
 	}
 	
 	/**
-	 * Starts PersoSim and listens to commands on the standard input stream
+	 * This constructor is used by the OSGi-service instantiation
 	 */
 	public PersoSim(){
-		startPersoSim();
+		currentPersonalization = new MinimumPersonalization();
 	}
 	
 	public PersoSim(String... args) {
+		this();
 		try {
 			CommandParser.handleArgs(this, args);
 		} catch (IllegalArgumentException e) {
