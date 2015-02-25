@@ -212,4 +212,9 @@ public class PersoSim implements Simulator {
 		return simPort;
 	}
 
+	@Override
+	public byte[] processCommand(byte[] apdu) {
+		return simulator.processCommand(apdu);
+	}
+
 }
