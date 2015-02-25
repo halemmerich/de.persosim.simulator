@@ -38,11 +38,9 @@ public class Activator implements BundleActivator {
 	@Override
 	public void start(BundleContext bundleContext) throws Exception {
 		Activator.context = bundleContext;
-
-		
 		serviceTracker = new ServiceTracker<Simulator, Simulator>(bundleContext, Simulator.class.getName(), null);
 		serviceTracker.open();
-		
+		serviceTracker.getService().startSimulator();
 	}
 
 	/*
