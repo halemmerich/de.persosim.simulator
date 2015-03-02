@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 
-import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.PropertyException;
 
@@ -14,7 +13,6 @@ import de.persosim.simulator.cardobjects.ElementaryFile;
 import de.persosim.simulator.cardobjects.FileIdentifier;
 import de.persosim.simulator.cardobjects.MasterFile;
 import de.persosim.simulator.cardobjects.ShortFileIdentifier;
-import de.persosim.simulator.jaxb.PersoSimJaxbContextProvider;
 import de.persosim.simulator.protocols.file.FileProtocol;
 import de.persosim.simulator.secstatus.NullSecurityCondition;
 import de.persosim.simulator.secstatus.SecCondition;
@@ -70,21 +68,6 @@ public class MinimumPersonalization extends XmlPersonalization {
 	}
 	
 	public void writeToFile(String fileName) {
-		try {
-			// instantiate marshaller
-			Marshaller m = PersoSimJaxbContextProvider.getContext().createMarshaller();
-			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-					
-			// Write to File
-			File xmlFile = new File(fileName);
-			m.marshal(this, xmlFile);
-		} catch (PropertyException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (JAXBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 	
 }

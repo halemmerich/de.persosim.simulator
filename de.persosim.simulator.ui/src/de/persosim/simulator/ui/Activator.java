@@ -7,6 +7,7 @@ import org.osgi.util.tracker.ServiceTracker;
 
 import de.persosim.simulator.CommandParser;
 import de.persosim.simulator.Simulator;
+import de.persosim.simulator.perso.DefaultPersoTestPki;
 
 /**
  * The activator for this bundle.
@@ -40,7 +41,7 @@ public class Activator implements BundleActivator {
 		Activator.context = bundleContext;
 		serviceTracker = new ServiceTracker<Simulator, Simulator>(bundleContext, Simulator.class.getName(), null);
 		serviceTracker.open();
-		serviceTracker.getService().loadPersonalization(CommandParser.parsePersonalization("personalization/profiles/Profile01.xml"));
+		serviceTracker.getService().loadPersonalization(new DefaultPersoTestPki());
 		serviceTracker.getService().startSimulator();
 	}
 
